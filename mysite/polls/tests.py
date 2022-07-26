@@ -48,8 +48,8 @@ class BaseTestCase(TestCase):
             user=user,
             dynamic_fields={
                 "city": "London",
-                "function": "development",
-            },
+                "function": "development"
+            }
         )
         self.poll = models.Poll.objects.create(
             title="What is your favourite color?",
@@ -127,7 +127,7 @@ class TestPerformance(BaseTestCase):
         self.client.login(username=USERNAME, password=PASSWORD)
 
     def test_querycount(self):
-        with self.assertNumQueries(13):
+        with self.assertNumQueries(5):
             self.client.get(reverse('index'))
 
 
@@ -143,7 +143,7 @@ class TestPollsMiddleware(BaseTestCase):
         response = self.client.get(reverse("index"), follow=True)
         self.assertRedirects(response, reverse("my_profile"))
 
-    def test_redirect_profile_uncompleted(self):
+    def test_redirect_profile_empty(self):
         """Test the redirect when user profile is not completed."""
         user = models.User.objects.create_user(
             username="random",
