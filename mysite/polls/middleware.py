@@ -7,9 +7,9 @@ def is_profile_complete(user):
     form = models.ProfileForm.objects.get(site=site)
     form_fields = form.form_fields['fields']
     required_fields = [field['id'] for field in form_fields if field['required']]
-    if user.profile.dynamic_fields:
+    try:
         is_complete = all([user.profile.dynamic_fields[field] for field in required_fields])
-    else:
+    except:
         return False
     return is_complete
 
