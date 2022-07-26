@@ -142,3 +142,22 @@ class TestPollsMiddleware(BaseTestCase):
         assert login, "Login Failed"
         response = self.client.get(reverse("index"), follow=True)
         self.assertRedirects(response, reverse("my_profile"))
+
+    def test_redirect_profile_uncompleted(self):
+        """Test the redirect when user profile is not completed."""
+        user = models.User.objects.create_user(
+            username="random",
+            password="random",
+        )
+        models.Profile.objects.create(
+            site=self.site,
+            user=user,
+            dynamic_fields={
+                "city": "",
+                "function": "",
+            },
+        )
+        login = self.client.login(username="random", password="random")
+        assert login, "Login Failed"
+        response = self.client.get(reverse("index"), follow=True)
+        self.assertRedirects(response, reverse("my_profile"))
