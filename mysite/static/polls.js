@@ -10,10 +10,9 @@ function saveAnswer(pollId, answerId) {
             'value': value
         }),
     })
-
     fetchPromise
-        .then(response => {
-            const data = response.json()
+        .then(response => response.json())
+        .then(data => {
             showAnswerValue(answerId, data)
             showFlash()
         })
