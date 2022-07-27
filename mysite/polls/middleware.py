@@ -23,7 +23,6 @@ def is_profile_complete(user):
     fields_validations = []
     if user.profile.dynamic_fields:
         for user_field, value in user.profile.dynamic_fields.items():
-            print(user_field, "value", value, "choices", required_choices[user_field])
             if user_field in required_fields and (value in str(required_choices[user_field]) or required_choices[user_field] == 'no-choice') and value:
                 fields_validations.append(True)
             else:

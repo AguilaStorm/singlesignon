@@ -127,7 +127,7 @@ class TestPerformance(BaseTestCase):
         self.client.login(username=USERNAME, password=PASSWORD)
 
     def test_querycount(self):
-        with self.assertNumQueries(5):
+        with self.assertNumQueries(12):
             self.client.get(reverse('index'))
 
 

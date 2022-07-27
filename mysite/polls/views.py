@@ -7,24 +7,31 @@ from polls.forms.user import ProfileForm
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
+from django.db.models import Prefetch
+from django.contrib.auth.models import Group
+
 @login_required
 def index(request):
+    """It renders the Polls"""
+    answers = models.Answer.objects.select_related('poll')
+    polls_count = len(set([answer.poll.pk for answer in answers]))
     context = {
-        'polls': []
+        'polls': [{
+            'title':'',
+            'id':'',
+            'answers':[]
+        } for _ in range(polls_count)]
     }
-    polls = models.Poll.objects.all()
-    for poll in polls:
-        item = {
-            "title": poll.title,
-            "id": poll.pk,
-            "answers": [{
+    for answer in answers:
+        context['polls'][answer.poll.pk-1]['title'] = answer.poll.title
+        context['polls'][answer.poll.pk-1]['id'] = answer.poll.id
+        context['polls'][answer.poll.pk-1]['answers'].append({
                 "value": answer.value,
                 "user_first_name": answer.user.first_name,
                 "user_last_name": answer.user.last_name,
                 "id": answer.pk,
-            } for answer in poll.answers.all()]
-        }
-        context['polls'].append(item)
+            })
+
 
     return render(request, 'polls/index.html', context)
 
