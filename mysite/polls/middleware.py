@@ -5,6 +5,8 @@ from polls import models
 
 
 def is_profile_complete(user):
+    """It check if user profile is completed"""
+    # TODO: It has already passed unit test but need to be more refactored.
     site = user.profile.site
     form = models.ProfileForm.objects.get(site=site)
     form_fields = form.form_fields['fields']
@@ -23,7 +25,8 @@ def is_profile_complete(user):
     fields_validations = []
     if user.profile.dynamic_fields:
         for user_field, value in user.profile.dynamic_fields.items():
-            if user_field in required_fields and (value in str(required_choices[user_field]) or required_choices[user_field] == 'no-choice') and value:
+            if user_field in required_fields and (value in str(required_choices[user_field]) or \
+                required_choices[user_field] == 'no-choice') and value:
                 fields_validations.append(True)
             else:
                 fields_validations.append(False)
