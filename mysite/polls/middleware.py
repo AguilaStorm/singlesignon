@@ -6,27 +6,28 @@ from polls import models
 
 def is_profile_complete(user):
     """It check if user profile is completed"""
-    # TODO: It has already passed unit test but need to be more refactored.
     site = user.profile.site
     form = models.ProfileForm.objects.get(site=site)
     form_fields = form.form_fields['fields']
+    dynamic_fields = user.profile.dynamic_fields
 
-    required_fields = {field['id']: (field['choices'] if field.get('choices') else 'no-choice') \
-        for field in form_fields if field['required']}
+    required_fields = {
+        field['id']: (field['choices'] if field.get('choices') else False)
+        for field in form_fields if field['required']
+        }
 
-    fields_validations = []
-    if user.profile.dynamic_fields:
-        for user_field, value in user.profile.dynamic_fields.items():
-            if user_field in required_fields.keys() and (value in str(required_fields[user_field]) or \
-                required_fields[user_field] == 'no-choice') and value:
-                fields_validations.append(True)
-            else:
-                fields_validations.append(False)
-
-        is_complete = all([*fields_validations, *[field in user.profile.dynamic_fields for field in required_fields.keys()]])
+    if dynamic_fields:
+        is_complete = all([
+            *[
+                (value in str(required_fields[user_field]) or
+                    not required_fields[user_field]) and value
+                for user_field, value in dynamic_fields.items()
+            ],
+            *[field in dynamic_fields for field in required_fields.keys()]])
         return is_complete
     else:
         return False
+
 
 class ProfileRedirectionMiddleware:
     def __init__(self, get_response):
