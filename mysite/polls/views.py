@@ -1,5 +1,4 @@
 import json
-from django import forms
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from polls import models
@@ -7,8 +6,6 @@ from polls.forms.user import ProfileForm
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
-from django.db.models import Prefetch
-from django.contrib.auth.models import Group
 
 @login_required
 def index(request):
@@ -17,9 +14,9 @@ def index(request):
     polls_count = len(set([answer.poll.pk for answer in answers]))
     context = {
         'polls': [{
-            'title':'',
-            'id':'',
-            'answers':[]
+            'title': '',
+            'id': '',
+            'answers': []
         } for _ in range(polls_count)]
     }
     for answer in answers:
@@ -31,9 +28,8 @@ def index(request):
                 "user_last_name": answer.user.last_name,
                 "id": answer.pk,
             })
-
-
     return render(request, 'polls/index.html', context)
+
 
 @login_required
 def my_profile(request):
@@ -47,6 +43,7 @@ def my_profile(request):
     data.update(current_user_profile.dynamic_fields)
     form = ProfileForm(fields=fields, initial=data)
     return render(request, 'polls/current_user.html', {'form': form})
+
 
 @login_required
 @csrf_exempt

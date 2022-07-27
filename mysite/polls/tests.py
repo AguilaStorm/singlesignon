@@ -1,20 +1,21 @@
 from django.test import Client, TestCase
 from django.contrib.auth.models import User
 from django.urls import reverse
-from django.urls.base import reverse_lazy
 
 from polls import models
 
 HTTP_200_OK = 200
 USERNAME = "jackm"
 PASSWORD = "qwerty"
+
+
 class BaseTestCase(TestCase):
     def setUp(self):
         super().setUp()
         self.site = models.Site.objects.create(domain="test")
         models.ProfileForm.objects.create(
             form_fields={
-                "fields" :[
+                "fields": [
                     {
                         "label": "City",
                         "id": "city",
@@ -26,10 +27,10 @@ class BaseTestCase(TestCase):
                         "type": "select",
                         "id": "function",
                         "choices": [
-                        ["", "Select a department"],
-                        ["development", "Development"],
-                        ["sales", "Sales"],
-                        ["marketing", "Marketing"]
+                            ["", "Select a department"],
+                            ["development", "Development"],
+                            ["sales", "Sales"],
+                            ["marketing", "Marketing"]
                         ],
                         "required": True
                     }
@@ -61,6 +62,7 @@ class BaseTestCase(TestCase):
         )
         self.client = Client()
 
+
 class TestLogin(BaseTestCase):
     def test_login_template(self):
         response = self.client.get(path=reverse("login"))
@@ -73,6 +75,7 @@ class TestLogin(BaseTestCase):
     def test_login_failure(self):
         login_success = self.client.login(username=USERNAME, password="random")
         assert not login_success, "Login did not fail"
+
 
 class TestIndexView(BaseTestCase):
     def setUp(self):
@@ -137,7 +140,11 @@ class TestPollsMiddleware(BaseTestCase):
             username="random",
             password="random",
         )
-        models.Profile.objects.create(user=user, site=self.site, dynamic_fields=[])
+        models.Profile.objects.create(
+            user=user,
+            site=self.site,
+            dynamic_fields=[]
+        )
         login = self.client.login(username="random", password="random")
         assert login, "Login Failed"
         response = self.client.get(reverse("index"), follow=True)

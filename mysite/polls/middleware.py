@@ -1,4 +1,3 @@
-import re
 from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
 from polls import models
